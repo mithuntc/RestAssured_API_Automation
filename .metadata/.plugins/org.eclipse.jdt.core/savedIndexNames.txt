@@ -1,0 +1,21 @@
+INDEX VERSION 1.134+D:\Selenium Automation\Web-test-Projects\Rest-Assured-API-Automation\.metadata\.plugins\org.eclipse.jdt.core
+2110704241.index
+2140176536.index
+2346704181.index
+3146391528.index
+1898076606.index
+1074738275.index
+3913193099.index
+1943387258.index
+3481822231.index
+2863322804.index
+703687962.index
+3645148439.index
+1451726272.index
+1563614270.index
+1865797976.index
+4023229054.index
+3399400330.index
+3234565673.index
+697728869.index
+59294043.index
