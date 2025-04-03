@@ -1,0 +1,55 @@
+import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
+import sourceData.Data;
+
+import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.*;
+
+public class BasicsAPI_Tests {
+	static String placeId;
+	static String getApiString;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		RestAssured.baseURI = "https://rahulshettyacademy.com";
+		String wholeResponse = given().log().all().queryParam("key", "qaclick123")
+				.header("content-type", "application/json").body(Data.AddPlace()).when().post("maps/api/place/add/json")
+				.then().assertThat().statusCode(200).body("scope", equalTo("APP")).extract().response().asString();
+		JsonPath path = new JsonPath(wholeResponse);// for parsing JSON;
+		placeId = path.getString("place_id"); // Storing PlaceId;
+		updateAPI();
+		getAPI();
+		checkingAddress();
+
+	}
+	// update API
+	public static void updateAPI() {
+		String address = "28 Summer Walk Africa";
+		String payLod = "{\r\n" + "    \"place_id\":\"" + placeId + "\",\r\n"
+				+ "     \"address\": \""+address+"\",\r\n" + "     \"key\": \"qaclick123\"\r\n" + "\r\n"
+				+ "}";
+		String newRes = given().log().all().queryParam("key", "qaclick123").header("content-type", "application/json")
+				.body(payLod).when().put("maps/api/place/update/json").then().assertThat().statusCode(200).extract()
+				.response().asString();
+		System.out.println(newRes);
+
+	}
+
+	// get API
+	public static void getAPI() {
+		getApiString = given().log().all().queryParam("key", "qaclick123").queryParam("place_id", placeId).when()
+				.put("maps/api/place/get/json").then().assertThat().statusCode(200).extract().response().asString();
+		System.out.println(getApiString);
+
+	}
+	// checking address
+	
+	private static void checkingAddress() {
+		// TODO Auto-generated method stub
+		JsonPath pathNew = new JsonPath(getApiString);// for parsing JSON;
+		
+		
+	}
+	
+	
+}

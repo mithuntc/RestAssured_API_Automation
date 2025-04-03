@@ -1,0 +1,40 @@
+import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
+import sourceData.Data;
+
+import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.*;
+public class BasicsAPI_Tests {
+	static String placeId;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		RestAssured.baseURI = "https://rahulshettyacademy.com";
+		String wholeResponse = given().log().all().queryParam("key", "qaclick123").header("content-type", "application/json")
+		.body(Data.AddPlace()).when().post("maps/api/place/add/json").then().assertThat().statusCode(200).body("scope", equalTo("APP"))
+		 .extract().response().asString();
+		
+		System.out.println(wholeResponse);
+		JsonPath path = new JsonPath(wholeResponse);//for parsing JSON
+		placeId = path.getString("place_id");
+		System.out.println(placeId);
+		updateAPI();
+		
+	}
+	
+	// update API
+	public static void updateAPI() {
+		String payLod = "{\r\n"
+				+ "    \"status\": \"OK\",\r\n"
+				+ "    \"place_id\":"+ placeId+",\r\n"
+				+ "    \"scope\": \"APP\",\r\n"
+				+ "    \"reference\": \"f171b1808e8311b89540681ded973a35f171b1808e8311b89540681ded973a35\",\r\n"
+				+ "    \"id\": \"f171b1808e8311b89540681ded973a35\"\r\n"
+				+ "}";
+		String newRes = given().log().all().queryParam("key", "qaclick123").header("content-type", "application/json")
+		.body(Data.AddPlace()).when().put("maps/api/place/update/json").then().assertThat().statusCode(200).body("scope", equalTo("APP"))
+		 .extract().response().asString();
+		
+		System.out.println(newRes);
+		
+	}
+}

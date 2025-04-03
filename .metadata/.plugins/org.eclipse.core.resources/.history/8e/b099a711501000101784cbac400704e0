@@ -1,0 +1,9 @@
+package reusableMethods;
+
+public class JsonParse {
+
+	
+	public void JsonParsing(String res) {
+		
+	}
+}

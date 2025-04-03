@@ -1,24 +1,61 @@
 import io.restassured.RestAssured;
-import static io.restassured.RestAssured.*;
-public class BasicsAPI_Tests {
+import io.restassured.path.json.JsonPath;
+import reusableMethods.JsonParse;
+import sourceData.Data;
 
+import static org.hamcrest.Matchers.*;
+
+import org.testng.Assert;
+
+import static io.restassured.RestAssured.*;
+
+public class BasicsAPI_Tests {
+	static String placeId;
+	static String getApiString;
+	static String address = "28 Summer Walk Africa";
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
-		// add API testing automation
-
-		// given - all input goes here
-		// When - Submit the API
-		// Then - Validate the response
 		RestAssured.baseURI = "https://rahulshettyacademy.com";
-		given().log().all().queryParam("key", "qaclick123").header("content-type", "application/json")
-				.body("{\r\n" + "  \"location\": {\r\n" + "    \"lat\": -38.383494,\r\n" + "    \"lng\": 33.427362\r\n"
-						+ "  },\r\n" + "  \"accuracy\": 50,\r\n" + "  \"name\": \"Frontline house\",\r\n"
-						+ "  \"phone_number\": \"(+91) 983 893 3937\",\r\n"
-						+ "  \"address\": \"29, side layout, cohen 09\",\r\n" + "  \"types\": [\r\n"
-						+ "    \"shoe park\",\r\n" + "    \"shop\"\r\n" + "  ],\r\n"
-						+ "  \"website\": \"http://google.com\",\r\n" + "  \"language\": \"French-IN\"\r\n" + "}\r\n"
-						+ "").when().post("maps/api/place/add/json").then().assertThat().statusCode(200);
+		String wholeResponse = given().log().all().queryParam("key", "qaclick123")
+				.header("content-type", "application/json").body(Data.AddPlace()).when().post("maps/api/place/add/json")
+				.then().assertThat().statusCode(200).body("scope", equalTo("APP")).extract().response().asString();
+		JsonPath path = JsonParse.JsonParsing(wholeResponse);
+		placeId = path.getString("place_id"); // Storing PlaceId;
+		updateAPI();
+		getAPI();
+		checkingAddress();
+
+	}
+	// update API
+	public static void updateAPI() {
+		
+		String payLod = "{\r\n" + "    \"place_id\":\"" + placeId + "\",\r\n"
+				+ "     \"address\": \""+address+"\",\r\n" + "     \"key\": \"qaclick123\"\r\n" + "\r\n"
+				+ "}";
+		String newRes = given().log().all().queryParam("key", "qaclick123").header("content-type", "application/json")
+				.body(payLod).when().put("maps/api/place/update/json").then().assertThat().statusCode(200).extract()
+				.response().asString();
+		System.out.println(newRes);
+
 	}
 
+	// get API
+	public static void getAPI() {
+		getApiString = given().log().all().queryParam("key", "qaclick123").queryParam("place_id", placeId).when()
+				.put("maps/api/place/get/json").then().assertThat().statusCode(200).extract().response().asString();
+		System.out.println(getApiString);
+
+	}
+	// checking address
+	private static void checkingAddress() {
+		// TODO Auto-generated method stub
+		JsonPath pathNew = JsonParse.JsonParsing(getApiString);
+		String actualAddress = pathNew.getString("address");
+		System.out.println(actualAddress);
+		Assert.assertEquals(actualAddress, address);
+		
+		
+	}
+	
+	
 }

@@ -1,0 +1,7 @@
+package sourceData;
+
+public class Data {
+	public String AddPlace() {
+
+	}
+}
